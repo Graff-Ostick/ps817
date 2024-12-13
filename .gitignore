@@ -1,0 +1,37 @@
+# Ignore the main configuration files
+/app/config/parameters.php
+/app/config/parameters.yml
+
+# Cache and logs
+/app/cache/
+/var/logs/
+/var/cache/
+/var/log/
+
+# Vendor dependencies (if using Composer)
+vendor/
+
+# Node modules
+node_modules/
+
+# Backup files
+*.bak
+*.log
+*.tmp
+*.swp
+
+# Ignore environment files
+.env
+.env.local
+
+# Ignore PrestaShop temporary and upload files
+/img/tmp/
+/upload/
+/download/
+!upload/index.php
+!download/index.php
+
+# Ignore specific files
+.idea/
+.DS_Store
+Thumbs.db
