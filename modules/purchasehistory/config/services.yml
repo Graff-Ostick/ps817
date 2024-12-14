@@ -5,14 +5,19 @@ services:
     arguments:
       $formBuilderModifier: '@form.form_builder_modifier'
 
-  Purchasehistory\Form\Type\CustomTabType:
+  prestashop.module.purchasehistory.product_page:
     class: Purchasehistory\Form\Type\CustomTabType
     parent: 'form.type.translatable.aware'
     public: true
     arguments:
-      - '@=service("prestashop.adapter.data_provider.currency").getDefaultCurrency()'
+      $translator: '@translator.default' # TranslatorInterface
+      $locales: '@=service("prestashop.adapter.legacy.context").getLanguages()' # Локалі
+      $repository: '@prestashop.module.purchasehistory.purchasehistory_repository' # PurchaseHistoryRepository
+      $twig: '@twig' # Environment
     tags:
       - { name: form.type }
 
-  Purchasehistory\Service\PurchaseHistoryService:
+  prestashop.module.purchasehistory.purchasehistory_repository:
+    class: Purchasehistory\Repository\PurchaseHistoryRepository
+    autowire: true
     public: true

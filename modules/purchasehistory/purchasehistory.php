@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use PrestaShop\PrestaShop\Core\Domain\Product\ValueObject\ProductId;
 use Purchasehistory\Form\Modifier\ProductFormModifier;
 
 if (!defined('_PS_VERSION_')) {
