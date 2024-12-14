@@ -1,0 +1,18 @@
+services:
+  Purchasehistory\Form\Modifier\ProductFormModifier:
+    autowire: true
+    public: true
+    arguments:
+      $formBuilderModifier: '@form.form_builder_modifier'
+
+  Purchasehistory\Form\Type\CustomTabType:
+    class: Purchasehistory\Form\Type\CustomTabType
+    parent: 'form.type.translatable.aware'
+    public: true
+    arguments:
+      - '@=service("prestashop.adapter.data_provider.currency").getDefaultCurrency()'
+    tags:
+      - { name: form.type }
+
+  Purchasehistory\Service\PurchaseHistoryService:
+    public: true
