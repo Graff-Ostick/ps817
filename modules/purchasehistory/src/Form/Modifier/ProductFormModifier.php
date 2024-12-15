@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Purchasehistory\Form\Modifier;
 
 use PrestaShopBundle\Form\FormBuilderModifier;
-use Purchasehistory\Form\Type\CustomTabType;
+use Purchasehistory\Form\Type\PurchaseHistoryTabType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 final class ProductFormModifier
@@ -31,7 +31,7 @@ final class ProductFormModifier
             $productFormBuilder,
             'pricing',
             'purchase_history',
-            CustomTabType::class,
+            PurchaseHistoryTabType::class,
             [
                 'product_id' => $productId,
             ]

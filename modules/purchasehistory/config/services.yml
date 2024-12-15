@@ -5,42 +5,21 @@ services:
     arguments:
       $formBuilderModifier: '@form.form_builder_modifier'
 
-  prestashop.module.purchasehistory.product_page:
-    class: Purchasehistory\Form\Type\CustomTabType
+  prestashop.module.purchasehistory.product_page_tab:
+    class: Purchasehistory\Form\Type\PurchaseHistoryTabType
     parent: 'form.type.translatable.aware'
     public: true
     arguments:
       $translator: '@translator.default'
       $locales: '@=service("prestashop.adapter.legacy.context").getLanguages()'
-      $gridFactory: '@prestashop.core.grid.factory.purchase_history'
       $repository: '@prestashop.module.purchasehistory.purchasehistory_repository'
-      $twig: '@twig' # Environment
     tags:
       - { name: form.type }
 
   prestashop.module.purchasehistory.purchasehistory_repository:
     class: Purchasehistory\Repository\PurchaseHistoryRepository
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
     autowire: true
     public: true
-
-  Purchasehistory\Grid\Definition\PurchaseHistoryGridDefinitionFactory:
-    autowire: true
-    public: true
-
-  Purchasehistory\Grid\Data\PurchaseHistoryGridDataProvider:
-    autowire: true
-    public: true
-    arguments:
-     - '@prestashop.module.purchasehistory.purchasehistory_repository'
-
-  prestashop.core.grid.factory.purchase_history:
-    class: PrestaShop\PrestaShop\Core\Grid\GridFactory
-    arguments:
-      - '@Purchasehistory\Grid\Definition\PurchaseHistoryGridDefinitionFactory' # Тепер це правильно
-      - '@Purchasehistory\Grid\Data\Factory\PurchaseHistoryGridDataFactory'
-      - '@prestashop.core.grid.filter.form_factory'
-
-  Purchasehistory\Grid\Data\Factory\PurchaseHistoryGridDataFactory:
-    class: Purchasehistory\Grid\Data\Factory\PurchaseHistoryGridDataFactory
-    arguments:
-      - '@Purchasehistory\Grid\Data\PurchaseHistoryGridDataProvider'

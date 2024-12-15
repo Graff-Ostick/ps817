@@ -3,9 +3,9 @@
     <name>purchasehistory</name>
     <displayName><![CDATA[Purchase History]]></displayName>
     <version><![CDATA[1.0.0]]></version>
-    <description><![CDATA[Adds a new "Purchase History" tab to the product page.]]></description>
+    <description><![CDATA[Adds a new &quot;Purchase History&quot; tab to the product page.]]></description>
     <author><![CDATA[Graff Ostick]]></author>
-    <tab><![CDATA[]]></tab>
+    <tab><![CDATA[administration]]></tab>
     <is_configurable>0</is_configurable>
     <need_instance>1</need_instance>
 </module>
