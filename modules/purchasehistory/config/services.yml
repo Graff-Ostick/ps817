@@ -10,9 +10,10 @@ services:
     parent: 'form.type.translatable.aware'
     public: true
     arguments:
-      $translator: '@translator.default' # TranslatorInterface
-      $locales: '@=service("prestashop.adapter.legacy.context").getLanguages()' # Локалі
-      $repository: '@prestashop.module.purchasehistory.purchasehistory_repository' # PurchaseHistoryRepository
+      $translator: '@translator.default'
+      $locales: '@=service("prestashop.adapter.legacy.context").getLanguages()'
+      $gridFactory: '@prestashop.core.grid.factory.purchase_history'
+      $repository: '@prestashop.module.purchasehistory.purchasehistory_repository'
       $twig: '@twig' # Environment
     tags:
       - { name: form.type }
@@ -21,3 +22,25 @@ services:
     class: Purchasehistory\Repository\PurchaseHistoryRepository
     autowire: true
     public: true
+
+  Purchasehistory\Grid\Definition\PurchaseHistoryGridDefinitionFactory:
+    autowire: true
+    public: true
+
+  Purchasehistory\Grid\Data\PurchaseHistoryGridDataProvider:
+    autowire: true
+    public: true
+    arguments:
+     - '@prestashop.module.purchasehistory.purchasehistory_repository'
+
+  prestashop.core.grid.factory.purchase_history:
+    class: PrestaShop\PrestaShop\Core\Grid\GridFactory
+    arguments:
+      - '@Purchasehistory\Grid\Definition\PurchaseHistoryGridDefinitionFactory' # Тепер це правильно
+      - '@Purchasehistory\Grid\Data\Factory\PurchaseHistoryGridDataFactory'
+      - '@prestashop.core.grid.filter.form_factory'
+
+  Purchasehistory\Grid\Data\Factory\PurchaseHistoryGridDataFactory:
+    class: Purchasehistory\Grid\Data\Factory\PurchaseHistoryGridDataFactory
+    arguments:
+      - '@Purchasehistory\Grid\Data\PurchaseHistoryGridDataProvider'

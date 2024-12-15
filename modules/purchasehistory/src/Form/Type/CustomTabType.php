@@ -4,53 +4,56 @@ declare(strict_types=1);
 
 namespace Purchasehistory\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Twig\Environment;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Purchasehistory\Repository\PurchaseHistoryRepository;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteria;
 
-class CustomTabType extends TranslatorAwareType
+final class CustomTabType extends TranslatorAwareType
 {
-    private PurchaseHistoryRepository $repository;
+    private GridFactoryInterface $gridFactory;
     private Environment $twig;
-    private TranslatorInterface $translator;
+    private PurchaseHistoryRepository $repository;
 
     /**
      * @param TranslatorInterface $translator
      * @param array $locales
+     * @param GridFactoryInterface $gridFactory
      * @param PurchaseHistoryRepository $repository
      * @param Environment $twig
      */
     public function __construct(
         TranslatorInterface $translator,
         array $locales,
+        GridFactoryInterface $gridFactory,
         PurchaseHistoryRepository $repository,
         Environment $twig
     ) {
         parent::__construct($translator, $locales);
+        $this->gridFactory = $gridFactory;
         $this->repository = $repository;
         $this->twig = $twig;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $purchaseHistory = $this->repository->getPurchaseHistory($options['product_id']);
+        $searchCriteria = new SearchCriteria();
 
-        $builder->add('purchase_history', TextareaType::class, [
-            'label' => false,
-            'data' => $this->twig->render('@Modules/purchasehistory/views/templates/admin/purchase_history.html.twig', [
-                'purchaseHistory' => $purchaseHistory,
-            ]),
-            'attr' => [
-                'readonly' => true,
-                'style' => 'background: transparent; border: none; resize: none;',
-            ],
+        $gridData = $this->gridFactory->getGrid($searchCriteria)->getData();
+        $gridHtml = $this->twig->render('@Modules/purchasehistory/views/templates/admin/purchase_history_grid.html.twig', [
+            'gridData' => $gridData,
+        ]);
+
+        $builder->add('purchase_history_grid', CollectionType::class, [
+            'mapped' => false,
+            'allow_add' => $gridHtml,
         ]);
     }
 
@@ -63,7 +66,7 @@ class CustomTabType extends TranslatorAwareType
 
         $resolver
             ->setDefaults([
-                'label' => $this->trans('Purchase history', 'Modules.Purchasehistory.Admin'),
+                'label' => $this->trans('Purchase history', 'Modules.Purchasehistory.Admin', []),
                 'product_id' => null,
             ])
             ->setAllowedTypes('product_id', ['null', 'int']);
